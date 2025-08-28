@@ -1,4 +1,4 @@
-name: Build Mod (Fabric 1.20.1)
+name: Build Mod (no-wrapper)
 
 on:
   push:
@@ -18,14 +18,14 @@ jobs:
           distribution: temurin
           java-version: '17'
 
-      - name: Set up Gradle
-        uses: gradle/actions/setup-gradle@v4
+      - name: Download Gradle 8.7
+        run: |
+          curl -L -o gradle.zip https://services.gradle.org/distributions/gradle-8.7-bin.zip
+          unzip -q gradle.zip -d $GITHUB_WORKSPACE
+          echo "$GITHUB_WORKSPACE/gradle-8.7/bin" >> $GITHUB_PATH
 
-      - name: Make Gradle wrapper executable
-        run: chmod +x gradlew
-
-      - name: Build
-        run: ./gradlew build --no-daemon
+      - name: Build with Gradle
+        run: gradle build --no-daemon
 
       - name: Upload artifacts
         uses: actions/upload-artifact@v4
